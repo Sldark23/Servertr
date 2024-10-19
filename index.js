@@ -12,8 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Função para ler dados do arquivo JSON
 const readData = () => {
     if (!fs.existsSync('data.json')) {
-        // Se o arquivo não existir, retorna um objeto vazio
-        return {};
+        return {}; // Retorna um objeto vazio se não existir o arquivo
     }
     const data = fs.readFileSync('data.json', 'utf-8');
     return JSON.parse(data);
@@ -36,20 +35,18 @@ app.post('/data', (req, res) => {
     const newData = req.body;
 
     if (!newData.id) {
-        return res.status(400).send('ID is required'); // Retorna erro em texto bruto
+        return res.status(400).send('ID is required'); // Retorna erro se ID não estiver presente
     }
 
     const data = readData();
-
-    // Adiciona os novos dados ao existente
     data[newData.id] = newData; // Presume que cada entrada tem um ID único
     writeData(data);
-    res.status(201).send(`Data added: ${JSON.stringify(newData, null, 2)}`); // Retorna confirmação em texto bruto
+    res.status(201).send(`Data added: ${JSON.stringify(newData, null, 2)}`); // Retorna confirmação
 });
 
-// Rota de boas-vindas
+// Rota para servir a página HTML
 app.get('/', (req, res) => {
-    res.send('<h1>Bem-vindo ao site da SDFCoins!</h1><p>Use /data para interagir com os dados.</p>');
+    res.sendFile(path.join(__dirname, 'views', 'index.html')); // Serve a página HTML
 });
 
 // Inicia o servidor

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDFCoins</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link para o CSS -->
+</head>
+<body>
+    <h1>Bem-vindo ao site da SDFCoins!</h1>
+    <p>Use os endpoints da API para interagir com os dados.</p>
+
+    <h2>Adicionar Dados</h2>
+    <form id="dataForm">
+        <input type="text" id="id" placeholder="ID" required>
+        <input type="text" id="name" placeholder="Nome" required>
+        <input type="text" id="value" placeholder="Valor" required>
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <h2>Dados Armazenados</h2>
+    <pre id="dataDisplay"></pre>
+
+    <script>
+        // Função para buscar e exibir dados armazenados
+        async function fetchData() {
+            const response = await fetch('/data');
+            const data = await response.json();
+            document.getElementById('dataDisplay').textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Função para enviar dados
+        document.getElementById('dataForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('id').value;
+            const name = document.getElementById('name').value;
+            const value = document.getElementById('value').value;
+
+            const response = await fetch('/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, name, value })
+            });
+
+            if (response.ok) {
+                fetchData(); // Atualiza a lista de dados após adicionar
+                document.getElementById('dataForm').reset(); // Limpa o formulário
+            } else {
+                const errorText = await response.text();
+                alert(`Erro: ${errorText}`);
+            }
+        });
+
+        // Buscar dados ao carregar a página
+        fetchData();
+    </script>
+</body>
+</html>
