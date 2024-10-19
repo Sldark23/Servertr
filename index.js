@@ -27,7 +27,8 @@ const writeData = (data) => {
 // Rota GET para obter dados
 app.get('/data', (req, res) => {
     const data = readData();
-    res.json(data);
+    res.set('Content-Type', 'application/json');
+    res.send(JSON.stringify(data, null, 2)); // Responde com dados em formato JSON
 });
 
 // Rota POST para adicionar dados
@@ -35,7 +36,7 @@ app.post('/data', (req, res) => {
     const newData = req.body;
 
     if (!newData.id) {
-        return res.status(400).json({ error: 'ID is required' });
+        return res.status(400).send('ID is required'); // Retorna erro em texto bruto
     }
 
     const data = readData();
@@ -43,7 +44,7 @@ app.post('/data', (req, res) => {
     // Adiciona os novos dados ao existente
     data[newData.id] = newData; // Presume que cada entrada tem um ID único
     writeData(data);
-    res.status(201).json(newData);
+    res.status(201).send(`Data added: ${JSON.stringify(newData, null, 2)}`); // Retorna confirmação em texto bruto
 });
 
 // Rota de boas-vindas
